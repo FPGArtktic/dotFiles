@@ -6,19 +6,11 @@ PROMPT_COMMAND="history -a" # Dodaje komendy do pliku historii po każdym polece
 shopt -s histappend # Dodaje nowe komendy do pliku historii, zamiast go nadpisywać
 shopt -s checkwinsize # Zmienia rozmiar okna terminala, aktualizuje historię
 
-# Funkcja do pobierania nazwy brancha Git
-git_branch() {
-  branch=$(git branch 2>/dev/null | grep "^\*" | cut -c 3-)
-  if [[ ! -z "$branch" ]]; then
-    echo " ($branch)"
-  fi
-}
 
-# Ustawienie kolorów
-RED="\[\033[0;31m\]"
-GREEN="\[\033[0;32m\]"
-BLUE="\[\033[0;34m\]"
-NORMAL="\[\033[0m\]"
-
-# Ustawienie prompta
-PS1="$GREEN\u@\h$BLUE \w$RED\$(git_branch)$NORMAL \$ "
+git_branch () { git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/\1/"; }
+HOST='\033[02;36m\]\h'; HOST=' '$HOST
+TIME='\033[01;31m\]\t \033[01;32m\]'
+LOCATION=' \033[01;34m\]/'
+BRANCH=' \033[00;33m\]$(git_branch)\[\033[00m\]\n$ '
+PS1=$TIME$USER$HOST$LOCATION$BRANCH
+PS2='\[\033[01;36m\]>'
